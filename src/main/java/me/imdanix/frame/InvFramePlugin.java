@@ -28,12 +28,9 @@ public final class InvFramePlugin extends JavaPlugin implements Listener {
     private final NamespacedKey invisKey = new NamespacedKey(this, "invisible");
     private final ItemStack invisFrameItem = editStack(new ItemStack(Material.ITEM_FRAME), (item) -> item.editMeta(meta -> {
         meta.getPersistentDataContainer().set(invisKey, PersistentDataType.BYTE, (byte) 1);
-        meta.lore(Collections.singletonList(Component.text("Невидимая рамка").color(NamedTextColor.GRAY)));
+        meta.lore(Collections.singletonList(Component.translatable("effect.minecraft.invisibility").color(NamedTextColor.GRAY)));
     }));
-    private final ItemStack invisFrameItemGlow = editStack(new ItemStack(Material.GLOW_ITEM_FRAME), (item) -> item.editMeta(meta -> {
-        meta.getPersistentDataContainer().set(invisKey, PersistentDataType.BYTE, (byte) 1);
-        meta.lore(Collections.singletonList(Component.text("Светящаяся невидимая рамка").color(NamedTextColor.GRAY)));
-    }));
+    private final ItemStack invisFrameItemGlow = editStack(invisFrameItem.clone(), (item) -> item.setType(Material.GLOW_ITEM_FRAME));
 
     @Override
     public void onEnable() {
@@ -55,9 +52,12 @@ public final class InvFramePlugin extends JavaPlugin implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onFramePlace(HangingPlaceEvent event) {
         ItemStack item = event.getItemStack();
-        if (item == null || !(item.getType() == Material.ITEM_FRAME || item.getType() != Material.GLOW_ITEM_FRAME)) return;
-        if (!item.hasItemMeta() || !isInvFrame(item.getItemMeta())) return;
-        event.getEntity().getPersistentDataContainer().set(invisKey, PersistentDataType.BYTE, (byte) 1);
+        if (item != null
+                && (item.getType() == Material.ITEM_FRAME || item.getType() == Material.GLOW_ITEM_FRAME)
+                && item.hasItemMeta()
+                && isInvFrame(item.getItemMeta())) {
+            event.getEntity().getPersistentDataContainer().set(invisKey, PersistentDataType.BYTE, (byte) 1);
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
