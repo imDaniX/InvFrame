@@ -1,0 +1,10 @@
+name: InvFrame
+version: '${project.version}'
+main: me.imdanix.frame.InvFramePlugin
+api-version: 1.18
+authors: [ imDaniX ]
+description: Just for invisible frames
+commands:
+  invframe:
+    permission: invframe.command
+    description: Get an invisible item frame
